@@ -1,11 +1,12 @@
 const express = require('express')
 const mongoose = require('mongoose')
 const UserData = require('./model')
+const config = require('./constant.json')
 const { body, validationResult } = require('express-validator');
 const app = express();
 app.use(express.json())
-const mongo = "mongodb+srv://sid123123:sid123123@cluster0.wzjydwy.mongodb.net/?retryWrites=true&w=majority"
-mongoose.connect(mongo).then(()=>{
+// const mongo = "mongodb+srv://sid123123:sid123123@cluster0.wzjydwy.mongodb.net/?retryWrites=true&w=majority"
+mongoose.connect(config.URL).then(()=>{
       console.log("database is connected")
 }).catch((err)=>{
       console.log(err.message)
@@ -29,7 +30,7 @@ app.post('/addusers',
          await newData.save()
          return res.json(await UserData.find())
      }catch(err){
-        console.log(err.message)
+        return res.status(400).send({message:err.message})
      }
 })
 
@@ -44,7 +45,7 @@ app.get('/getusers',async (req,res)=>{
 app.get('/getusers/:id',async (req,res)=>{
     try{
         const alldata = UserData.findById(req.params.id)
-        return res.json( await alldata)
+        return res.json(await alldata)
     }catch(err){
         console.log(err.message)
     }
